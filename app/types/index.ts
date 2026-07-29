@@ -10,12 +10,29 @@ export interface Project {
   description: string;
   longDescription: string;
   industry: string;
-  category: "iot" | "erp" | "saas" | "enterprise" | "backend";
+  category:
+    | "iot"
+    | "erp"
+    | "saas"
+    | "enterprise"
+    | "backend"
+    | "research"
+    | "academic"
+    | "automation"
+    | "finance";
   featured: boolean;
+  image?: string;
   stack: string[];
   architecture: string[];
   githubUrl?: string;
   demoUrl?: string;
+  role?: string;
+  gallery?: string[];
+  features?: string[];
+  contribution?: string[];
+  challenges?: string[];
+  results?: string[];
+  technicalInfo?: string[];
   problem: string;
   solution: string;
   impact: ImpactMetric[];
@@ -29,7 +46,9 @@ export type ProjectStatus =
   | "DEPLOYED_GLOBALLY"
   | "OPERATIONAL"
   | "IN_PRODUCTION"
-  | "ACTIVE";
+  | "ACTIVE"
+  | "RESEARCH"
+  | "PROTOTYPE";
 
 export interface ImpactMetric {
   label: string;
@@ -51,6 +70,7 @@ export interface Profile {
   title: string;
   tagline: string;
   email: string;
+  phone: string;
   github: string;
   linkedin: string;
   location: string;

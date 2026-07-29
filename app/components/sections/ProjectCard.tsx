@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import type { Project } from "../../types";
 import { ACCENT } from "../../lib/constants";
@@ -15,9 +16,16 @@ const CORNER_CLASSES: Record<string, string> = {
 interface ProjectCardProps {
   project: Project;
   delay?: number;
+  compact?: boolean;
+  onSelect?: (project: Project) => void;
 }
 
-export default function ProjectCard({ project, delay = 0 }: ProjectCardProps) {
+export default function ProjectCard({
+  project,
+  delay = 0,
+  compact = false,
+  onSelect,
+}: ProjectCardProps) {
   const [visible, setVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -35,57 +43,80 @@ export default function ProjectCard({ project, delay = 0 }: ProjectCardProps) {
   return (
     <div
       ref={ref}
-      className="group relative pl-8 border-l-2 border-[#333] hover:border-[#ccff00] transition-colors duration-500"
+      role="button"
+      tabIndex={0}
+      onClick={() => onSelect?.(project)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onSelect?.(project);
+        }
+      }}
+      className={`group relative cursor-pointer border-l-2 border-[#333] pl-8 transition-colors duration-500 hover:border-[#ccff00] ${
+        compact ? "pb-2" : ""
+      }`}
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(40px)",
         transition: `opacity 0.6s ease ${delay}ms, transform 0.6s ease ${delay}ms, border-color 0.3s`,
       }}
     >
-      {/* Timeline dot */}
       <div
-        className="absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 border-[#333] group-hover:border-[#ccff00] transition-colors"
+        className="absolute -left-[9px] top-0 h-4 w-4 rounded-full border-2 border-[#333] transition-colors group-hover:border-[#ccff00]"
         style={{ background: "#050505" }}
       />
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Image placeholder */}
-        <div className="lg:w-5/12 aspect-video bg-[#111] border border-[#333] group-hover:border-[#ccff00]/50 transition-colors relative overflow-hidden rounded">
-          {/* Grid overlay */}
-          <div
-            className="absolute inset-0 opacity-20"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)",
-              backgroundSize: "20px 20px",
-            }}
-          />
-          {/* Corner brackets */}
-          {CORNER_KEYS.map((k) => (
+      <div className={`flex flex-col gap-8 ${compact ? "" : "lg:flex-row"}`}>
+        {!compact && (
+          <div className="relative aspect-video overflow-hidden rounded border border-[#333] bg-[#111] transition-colors group-hover:border-[#ccff00]/50 lg:w-5/12">
+            {project.image && (
+              <Image
+                src={project.image}
+                alt={`Imagen del proyecto ${project.shortTitle}`}
+                fill
+                sizes="(max-width: 1024px) 100vw, 34vw"
+                className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
+              />
+            )}
             <div
-              key={k}
-              className={`absolute w-4 h-4 ${CORNER_CLASSES[k]}`}
-              style={{ borderColor: `${ACCENT}80` }}
+              className="absolute inset-0 opacity-20 mix-blend-screen"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)",
+                backgroundSize: "20px 20px",
+              }}
             />
-          ))}
-          <div className="absolute top-2 right-2 px-2 py-1 bg-black/80 border border-[#333] text-[10px] font-mono text-gray-500">
-            EVIDENCE_#{project.id}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/25" />
+            {CORNER_KEYS.map((k) => (
+              <div
+                key={k}
+                className={`absolute h-4 w-4 ${CORNER_CLASSES[k]}`}
+                style={{ borderColor: `${ACCENT}80` }}
+              />
+            ))}
+            <div className="absolute right-2 top-2 border border-[#333] bg-black/80 px-2 py-1 font-mono text-[10px] text-gray-400">
+              PROYECTO_#{project.id}
+            </div>
+            <div className="absolute bottom-3 left-3 rounded border border-[#ccff00]/40 bg-black/80 px-3 py-2 font-mono text-[10px] font-bold uppercase tracking-widest text-[#ccff00] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              Ver caso de estudio
+            </div>
+            {!project.image && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span
+                  className="font-mono text-4xl font-black opacity-10"
+                  style={{ color: ACCENT }}
+                >
+                  {project.id}
+                </span>
+              </div>
+            )}
           </div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span
-              className="font-mono text-4xl font-black opacity-10"
-              style={{ color: ACCENT }}
-            >
-              {project.id}
-            </span>
-          </div>
-        </div>
+        )}
 
-        {/* Content */}
-        <div className="lg:w-7/12 flex flex-col justify-center">
-          <div className="flex items-center gap-4 mb-4">
+        <div className={`flex flex-col justify-center ${compact ? "" : "lg:w-7/12"}`}>
+          <div className="mb-4 flex flex-wrap items-center gap-3">
             <span
-              className="font-mono text-xs tracking-widest border px-2 py-1"
+              className="border px-2 py-1 font-mono text-xs tracking-widest"
               style={{
                 color: ACCENT,
                 borderColor: `${ACCENT}30`,
@@ -94,37 +125,36 @@ export default function ProjectCard({ project, delay = 0 }: ProjectCardProps) {
             >
               {project.category.toUpperCase()}
             </span>
-            <span className="text-gray-600 font-mono text-xs">
-              // {project.industry.toUpperCase()}
+            <span className="font-mono text-xs text-gray-600">
+              {"// "}
+              {project.industry.toUpperCase()}
             </span>
           </div>
 
-          <h3 className="text-2xl font-black mb-4 uppercase group-hover:text-[#ccff00] transition-colors">
+          <h3 className="mb-4 text-2xl font-black uppercase transition-colors group-hover:text-[#ccff00]">
             <span className="text-white">{project.shortTitle}</span>
           </h3>
 
-          <p className="font-mono text-sm text-gray-400 leading-relaxed mb-6 group-hover:text-white transition-colors duration-300">
+          <p className="mb-6 font-mono text-sm leading-relaxed text-gray-400 transition-colors duration-300 group-hover:text-white">
             {project.description}
           </p>
 
-          {/* Impact metrics */}
-          <div className="flex flex-wrap gap-3 mb-4">
-            {project.impact.slice(0, 3).map((imp) => (
+          <div className="mb-4 flex flex-wrap gap-3">
+            {project.impact.slice(0, compact ? 2 : 3).map((imp) => (
               <div
                 key={imp.label}
-                className="text-xs font-mono text-green-400 border border-green-400/20 px-2 py-1 rounded"
+                className="rounded border border-green-400/20 px-2 py-1 font-mono text-xs text-green-400"
               >
-                ✓ {imp.value} — {imp.label}
+                OK {imp.value} - {imp.label}
               </div>
             ))}
           </div>
 
-          {/* Stack */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            {project.stack.map((t) => (
+          <div className="mb-4 flex flex-wrap gap-2">
+            {project.stack.slice(0, compact ? 8 : 12).map((t) => (
               <span
                 key={t}
-                className="text-xs font-mono px-2 py-1 border border-[#333] bg-[#111]"
+                className="border border-[#333] bg-[#111] px-2 py-1 font-mono text-xs"
                 style={{ color: `${ACCENT}cc` }}
               >
                 {t}
@@ -132,33 +162,12 @@ export default function ProjectCard({ project, delay = 0 }: ProjectCardProps) {
             ))}
           </div>
 
-          {/* Status */}
-          <div className="border-t border-[#333] pt-4 flex items-center justify-between">
-            <div className="flex gap-4">
-              {project.githubUrl && (
-                <a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-[#ccff00] transition-colors font-mono text-xs"
-                >
-                  ⎘ SOURCE_CODE
-                </a>
-              )}
-              {project.demoUrl && (
-                <a
-                  href={project.demoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-[#ccff00] transition-colors font-mono text-xs"
-                >
-                  ↗ LIVE_LINK
-                </a>
-              )}
+          <div className="flex items-center justify-between border-t border-[#333] pt-4">
+            <div className="font-mono text-xs text-gray-500">
+              {project.year}
             </div>
-            <div className="font-mono text-xs border border-white/20 px-3 py-1 text-white/50 flex items-center gap-2">
-              STATUS:{" "}
-              <span style={{ color: ACCENT }}>{project.status}</span>
+            <div className="flex items-center gap-2 border border-white/20 px-3 py-1 font-mono text-xs text-white/50">
+              STATUS: <span style={{ color: ACCENT }}>{project.status}</span>
             </div>
           </div>
         </div>

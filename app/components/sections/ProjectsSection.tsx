@@ -2,11 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import ProjectCard from "./ProjectCard";
-import { featuredProjects } from "../../data/projects";
+import ProjectModal from "./ProjectModal";
+import { featuredProjects, otherProjects, projects } from "../../data/projects";
 import { ACCENT } from "../../lib/constants";
+import type { Project } from "../../types";
 
 export default function ProjectsSection() {
   const [visible, setVisible] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -20,59 +23,64 @@ export default function ProjectsSection() {
     return () => obs.disconnect();
   }, []);
 
+  const selectedIndex = selectedProject
+    ? projects.findIndex((project) => project.id === selectedProject.id)
+    : -1;
+
+  const selectByOffset = (offset: number) => {
+    if (selectedIndex < 0) return;
+    const nextIndex = (selectedIndex + offset + projects.length) % projects.length;
+    setSelectedProject(projects[nextIndex]);
+  };
+
   return (
     <section
       ref={ref}
       id="projects"
-      className="relative bg-[#050505] text-[#f0f0f0] py-20 overflow-hidden"
+      className="relative overflow-hidden bg-[#050505] py-20 text-[#f0f0f0]"
+      style={{ scrollMarginTop: "120px" }}
     >
-      <div className="container mx-auto px-8 flex flex-col md:flex-row gap-12">
-        {/* Sticky sidebar */}
-        <div className="md:w-1/3 md:sticky md:top-20 md:self-start py-4">
+      <div className="container mx-auto flex flex-col gap-12 px-8 md:flex-row">
+        <div className="py-4 md:sticky md:top-28 md:w-1/3 md:self-start">
           <div
-            className="flex items-center gap-2 text-xs font-mono mb-2"
+            className="mb-2 flex items-center gap-2 font-mono text-xs"
             style={{ color: `${ACCENT}80` }}
           >
-            <span>🔒</span>
-            <span className="tracking-widest">TOP SECRET // LEVEL 5</span>
+            <span className="h-2 w-2 rounded-full bg-[#ccff00]" />
+            <span className="tracking-widest">PORTFOLIO // PROYECTOS</span>
           </div>
           <div
-            className="text-6xl font-black tracking-tighter"
-            style={{ color: "transparent", WebkitTextStroke: `1px #555` }}
+            className="text-5xl font-black uppercase tracking-tighter sm:text-6xl"
+            style={{ color: "transparent", WebkitTextStroke: "1px #555" }}
           >
-            MISSION
+            Proyectos
           </div>
           <div
-            className="text-6xl font-black tracking-tighter"
+            className="text-5xl font-black uppercase tracking-tighter sm:text-6xl"
             style={{ color: ACCENT, textShadow: `0 0 15px ${ACCENT}50` }}
           >
-            ARCHIVES
+            Destacados
           </div>
-          <div className="mt-6 font-mono text-sm text-gray-400 max-w-xs">
-            <p className="mb-3">&gt; ACCESSING ENCRYPTED DATABASE...</p>
+          <div className="mt-6 max-w-xs font-mono text-sm text-gray-400">
+            <p className="mb-3">&gt; CARGANDO ARCHIVOS TECNICOS...</p>
             <p>
-              Registros operacionales clasificados. Cada archivo representa un sistema
-              tecnológico construido y desplegado en producción.
+              Sistemas backend, SaaS, IoT, IA e investigacion aplicada construidos
+              para resolver problemas reales.
             </p>
           </div>
 
-          {/* Stack chips */}
           <div className="mt-6 flex flex-wrap gap-2">
-            {["Go", "Microservices", "IoT", "REST APIs", "Docker", "SQL"].map((t) => (
+            {["Go", "Laravel", "IoT", "IA", "SaaS", "Docker", "RAG"].map((t) => (
               <span
                 key={t}
-                className="text-[10px] font-mono px-2 py-1 border border-[#333] text-gray-500"
+                className="border border-[#333] px-2 py-1 font-mono text-[10px] text-gray-500"
               >
                 {t}
               </span>
             ))}
           </div>
 
-          {/* Progress bar */}
-          <div
-            className="mt-8 h-1 w-full rounded-full overflow-hidden"
-            style={{ background: "#1a1a1a" }}
-          >
+          <div className="mt-8 h-1 w-full overflow-hidden rounded-full bg-[#1a1a1a]">
             <div
               className="h-full rounded-full transition-all duration-1000"
               style={{
@@ -81,18 +89,57 @@ export default function ProjectsSection() {
               }}
             />
           </div>
-          <div className="mt-1 text-[10px] font-mono text-gray-500 text-right">
-            DATABASE DECRYPTION STATUS
+          <div className="mt-1 text-right font-mono text-[10px] text-gray-500">
+            {featuredProjects.length} DESTACADOS / {otherProjects.length} ADICIONALES
           </div>
         </div>
 
-        {/* Projects list */}
-        <div className="md:w-2/3 flex flex-col gap-20">
-          {featuredProjects.map((project, i) => (
-            <ProjectCard key={project.id} project={project} delay={i * 150} />
-          ))}
+        <div className="flex flex-col gap-20 md:w-2/3">
+          <div className="flex flex-col gap-20">
+            {featuredProjects.map((project, i) => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                delay={i * 100}
+                onSelect={setSelectedProject}
+              />
+            ))}
+          </div>
+
+          <div className="border-t border-[#333] pt-12">
+            <div className="mb-10">
+              <div className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-[#ccff00]">
+                {"// Otros proyectos"}
+              </div>
+              <h3 className="mt-3 text-3xl font-black uppercase text-white">
+                Experiencia adicional
+              </h3>
+            </div>
+
+            <div className="grid gap-10 lg:grid-cols-2">
+              {otherProjects.map((project, i) => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  delay={i * 100}
+                  compact
+                  onSelect={setSelectedProject}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
+
+      {selectedProject && (
+        <ProjectModal
+          key={selectedProject.id}
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+          onPrev={() => selectByOffset(-1)}
+          onNext={() => selectByOffset(1)}
+        />
+      )}
     </section>
   );
 }

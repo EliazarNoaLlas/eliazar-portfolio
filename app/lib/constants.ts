@@ -1,5 +1,5 @@
 // ============================================================
-// GLOBAL CONSTANTS — CyberOS Theme
+// Global constants - CyberOS theme
 // ============================================================
 
 export const ACCENT = "#ccff00";
@@ -11,53 +11,54 @@ export const BORDER_COLOR = "#222";
 export const BORDER_ACCENT = "#333";
 
 export const TERMINAL_BOOT_LINES = [
-  "Initializing kernel...",
-  "Loading AI modules...",
-  "Mounting file system...",
-  "Starting network services...",
-  "Connecting to SEGETRAN IoT cluster...",
-  "Welcome to ARCH-OS v3.0 — PE-CUSCO-1",
+  "[ok] Inicializando kernel...",
+  "[ok] Cargando modulos de IA...",
+  "[ok] Montando sistema de archivos...",
+  "[ok] Iniciando servicios de red...",
+  "[ok] Conectando al cluster IoT SEGETRAN...",
+  "[ok] Preparando microservicios...",
 ];
 
 export const TERMINAL_COMMANDS: Record<string, () => string[] | null> = {
   help: () => [
-    "Available commands:",
-    "  about     — Who am I",
-    "  skills    — Tech stack",
-    "  projects  — My work",
-    "  contact   — Get in touch",
-    "  clear     — Clear terminal",
+    "Comandos disponibles:",
+    "  about     - perfil profesional",
+    "  skills    - stack tecnico",
+    "  projects  - proyectos destacados",
+    "  contact   - datos de contacto",
+    "  clear     - limpiar terminal",
   ],
   about: () => [
-    "Name: Eliazar Noa",
-    "Role: Backend Developer | Microservices | Go | IoT Systems",
-    "Location: Cusco, Perú",
-    "Specialties: Go, Microservices, Hexagonal Architecture, IoT",
-    "Projects: SEGETRAN · MacSalud · ODIN · CONCETUR · ISIWEEK POS",
+    "Nombre: Eliazar Noa Llasccanoa",
+    "Rol: Backend Developer | Microservicios | Go | Sistemas IoT",
+    "Ubicacion: Cusco, Peru",
+    "Especialidades: Go, microservicios, arquitectura hexagonal e IoT",
+    "Proyectos: SEGETRAN, MacSalud, ODIN, CONCETUR, ISIWEEK POS",
   ],
   skills: () => [
-    "Core Stack:",
-    "  → Backend:  Go (Golang), Node.js, REST APIs",
-    "  → Arch:     Hexagonal, Clean Architecture, SOLID",
-    "  → Database: MySQL, SQL Server, PostgreSQL",
-    "  → DevOps:   Docker, Kubernetes, Git",
-    "  → IoT:      MQTT, I2C, RS485, GPS, NTP",
-    "  → Testing:  Unit Testing, SQLMock, Mocking",
+    "Stack principal:",
+    "  -> Backend:  Go, Node.js, Laravel, APIs REST",
+    "  -> Arquitectura: Hexagonal, Clean Architecture, SOLID",
+    "  -> Datos: MySQL, SQL Server, PostgreSQL",
+    "  -> DevOps: Docker, Kubernetes, Git",
+    "  -> IoT: MQTT, I2C, RS485, GPS, NTP",
+    "  -> Testing: Unit testing, SQLMock, mocking",
   ],
   projects: () => [
-    "Featured Projects:",
-    "  [1] SEGETRAN — IoT Traffic Management System",
-    "  [2] MacSalud — Pharmaceutical ERP",
-    "  [3] ODIN     — Construction Management System",
-    "  [4] CONCETUR — Tourist Operations Platform",
-    "  [5] ISIWEEK  — Multi-Tenant SaaS POS",
-    "  Type 'contact' to discuss a project.",
+    "Proyectos destacados:",
+    "  [1] SEGETRAN - sistema IoT de gestion de transito",
+    "  [2] MacSalud - ERP farmaceutico",
+    "  [3] ODIN - gestion de obras de construccion",
+    "  [4] CONCETUR - plataforma de operaciones turisticas",
+    "  [5] ISIWEEK - SaaS POS multi-tenant",
+    "  Escribe 'contact' para conversar sobre un proyecto.",
   ],
   contact: () => [
-    "Email:    your.email@email.com",
-    "GitHub:   github.com/your-username",
-    "LinkedIn: linkedin.com/in/eliazar-noa",
-    "Status:   ACCEPTING_CONTRACTS",
+    "Email:    infoeliasar12@gmail.com",
+    "Telefono: +51 916367507",
+    "GitHub:   github.com/EliazarNoaLlas",
+    "LinkedIn: linkedin.com/in/eliazar-noa-llasccanoa",
+    "Estado:   DISPONIBLE_PARA_PROYECTOS",
   ],
   clear: () => null,
 };

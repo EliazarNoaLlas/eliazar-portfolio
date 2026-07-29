@@ -6,9 +6,14 @@ export function useTime() {
   const [time, setTime] = useState<Date | null>(null);
 
   useEffect(() => {
-    setTime(new Date());
-    const id = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(id);
+    const update = () => setTime(new Date());
+    const timeout = setTimeout(update, 0);
+    const interval = setInterval(update, 1000);
+
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
   }, []);
 
   return time;
